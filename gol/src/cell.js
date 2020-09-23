@@ -35,7 +35,6 @@ class Cell extends React.Component{
             id = {this.props.row+'_'+this.props.col} 
             className={(this.state.alive === false)?'dead':'alive'} 
             onClick={this.onClick}>
-
             </td>
         )
     }
