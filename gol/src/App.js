@@ -12,30 +12,36 @@ class App extends React.Component{
         next: [],
     };
   }
-  setCurrentGen() {
-
+  setCurrentGen = ()=> {
+    this.setState({
+      current: []
+    })
     for(let row = 0; row < 25 ; row++){
+      console.log(row)
       for(let col = 0; col < 25 ; col++){
+        console.log(col)
         let elementId = document.getElementById(row+'_'+col)
         if( elementId.className === 'alive'){
-          this.setState({
-            current: [...this.state.current, 1]
+          this.setState(state=>{
+            const current = state.current.push(1)
+            return current
           })
         }
         else{
-          this.setState({
-            current: [...this.state.current, 0]
+          this.setState(state=>{
+            const current = state.current.push(0)
+            return current
           })
         }
     }
   }
   }
 
-  getNeigbors = function(){
+  getNeigbors = ()=>{
 
   }
-  evolve() {
-    console.log(this.state.current === [] ? true:false)
+  evolve = ()=>{
+    console.log(this.state.current)
     
   }
   render(){
@@ -44,7 +50,7 @@ class App extends React.Component{
         <h1>The Game of Life!</h1>
         < World_grid/>
         <button onClick={this.evolve}>Evolve</button>
-        <button onClick={this.setCurrentGen}>{this.state.rows_cols}</button>
+        <button onClick={this.setCurrentGen}>TEST</button>
       </div>
     );
   }
