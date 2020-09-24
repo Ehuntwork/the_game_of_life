@@ -12,28 +12,41 @@ class App extends React.Component{
         next: [],
     };
   }
-  setCurrentGen = ()=> {
+
+  steInitGen = ()=> {
+    //clears current
     this.setState({
       current: []
     })
+
+    //creates rows in 2d array
     for(let row = 0; row < 25 ; row++){
-      console.log(row)
-      for(let col = 0; col < 25 ; col++){
-        console.log(col)
-        let elementId = document.getElementById(row+'_'+col)
-        if( elementId.className === 'alive'){
-          this.setState(state=>{
-            const current = state.current.push(1)
-            return current
-          })
-        }
-        else{
-          this.setState(state=>{
-            const current = state.current.push(0)
-            return current
-          })
-        }
-    }
+      this.setState(state=>{
+        let innerArray = []//holder for colmn nums
+        const current = [...state.current, innerArray]
+
+        //creates cols in 2d array
+        for(let col = 0; col < 25 ; col++){
+          //gets starter tiles
+          let elementId = document.getElementById(row+'_'+col)
+
+          //checks for live tiles
+          if( elementId.className === 'alive'){
+            innerArray.push(1)
+
+          }
+
+          //checks for dead tiles
+          else{
+            innerArray.push(0)
+          }
+      }
+      return{
+        ...this.state,
+        current
+      }
+      })
+
   }
   }
 
@@ -41,7 +54,9 @@ class App extends React.Component{
 
   }
   evolve = ()=>{
+
     console.log(this.state.current)
+    console.log(this.state.current[0][0])
     
   }
   render(){
@@ -50,7 +65,7 @@ class App extends React.Component{
         <h1>The Game of Life!</h1>
         < World_grid/>
         <button onClick={this.evolve}>Evolve</button>
-        <button onClick={this.setCurrentGen}>TEST</button>
+        <button onClick={this.steInitGen}>TEST</button>
       </div>
     );
   }
