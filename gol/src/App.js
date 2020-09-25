@@ -1,152 +1,198 @@
 import React from 'react';
 import './App.css';
 import World_grid from './world_grid'
-import {test }from './functions'
 
-class App extends React.Component{
-  constructor(){
-    super();
-    this.state={
-        rows_cols: 25,
-        gen: 0,
-        current: [],
-        next: [],
-        start: false
-    };
+
+function App(){
+  let current = []
+  let next = []
+  const rows_cols = 25
+
+  function two_Dify_arrays(){
+    for(let i=0;i<rows_cols;i++){
+      current[i] = new Array()
+      next[i] = new Array()
+    }
+  }
+  function initialGen(){
+    for(let row = 0; row < rows_cols; row++){
+      for(let col = 0; col < rows_cols; col++){
+        current[row][col] = 0;
+        next[row][col] = 0
+      }
+    }
+  }
+  let setInitGen = ()=> {
+    for(let row = 0; row < 25 ; row++){
+      for(let col = 0; col < 25 ; col++){
+        //gets starter tiles
+        let elementId = document.getElementById(row+'_'+col)
+
+        //checks for live tiles
+        if( elementId.className === 'alive'){
+        current[row][col] = 1
+        }
+
+        //checks for dead tiles
+        else{
+          current[row][col] = 0
+        }
+    }
+    }
+  }
+  
+  let checkNeighbors = (row, col)=>{
+  let neighbors = 0
+  let ac = col + 1
+  let sc = col - 1
+  let ar = row + 1
+  let sr = row - 1
+  let edge = rows_cols - 1
+
+  if (row > 0) {//if not top row 
+      if (current[sr][col] === 1) {
+          neighbors++;}
+  }
+
+
+  if (row > 0 && col > 0){//if not top left corner
+      if (current[sr][sc] === 1){ 
+      neighbors++;}
+  }
+
+
+  if (row > 0 && col < edge){//if not top right
+          if (current[sr][ac] === 1){ 
+              neighbors++;}
+  }
+
+
+  if (col > 0) {//if not left
+      if (current[row][sc] === 1){ 
+          neighbors++;}
+  }
+
+
+  if (col < edge) {//if not right
+      if (current[row][ac] === 1){ 
+          neighbors++;}
+  }
+
+  if (row < edge && col > 0) {//if not bottom left
+      if (current[ar][sc] === 1){ 
+          neighbors++;}
+  }
+
+  if (row < edge && col < edge) {//if not bottom right
+      if (current[ar][ac] === 1){ 
+          neighbors++;}
+  }
+  
+  
+  if (row < edge) {//if not bottom
+      if (current[ar][col] === 1) {
+          neighbors++;}
+  }
+
+  
+  return neighbors;
+      
+  }
+
+  let setNext = ()=>{
+    //apply rules
+    for(let row = 0; row < 25 ; row++){
+      for(let col = 0; col < 25 ; col++){
+        //if an alive cell has more than 4 or less than one neighbor it dies
+        if(current[row][col] === 1){
+          if(checkNeighbors(row,col) <= 1){
+            next[row][col] = 0
+          }
+          else if( checkNeighbors(row,col)>=4){
+            next[row][col] = 0
+          }
+          else if( checkNeighbors(row,col) >= 2 && checkNeighbors(row,col) <= 3){
+            next[row][col] = 1
+          }
+        }
+        
+        //if a dead cell has 3 neigbors it is resurected
+        else if(current[row][col] === 0){
+          if(checkNeighbors(row,col) === 3){
+            next[row][col] = 1
+          }
+        }
+      }
+    }
+  }
+
+  let updateCurrent = ()=>{
+    for(let row = 0; row < 25 ; row++){
+      for(let col = 0; col < 25 ; col++){
+        current[row][col] = next[row][col];
+        // Set nextGen back to empty
+        next[row][col] = 0;
+      }
+    } 
+  }
+
+
+  let updateWorld= ()=> {
+      for (let row = 0; row < rows_cols; row++) {
+          for (let col = 0; col < rows_cols; col++) {
+              let cell = document.getElementById(row + '_' + col);
+              
+              if (current[row][col] === 0) {
+                  cell.setAttribute('class', 'dead');
+                  cell.style.backgroundColor = 'white'
+              } else {
+                  cell.setAttribute('class', 'alive');
+                  cell.style.backgroundColor = 'blue'
+
+                }
+          }
+      }
   }
   
   //START BUTTON////////////////////////////////
-
-  start = ()=>{
-    let steInitGen = ()=> {
-      //clears current
-      this.setState({
-        current: []
-      })
-
-      //creates rows in 2d array
-      for(let row = 0; row < 25 ; row++){
-        this.setState(state=>{
-          let innerArray = []//holder for colmn nums
-          const current = [...state.current, innerArray]
-
-          //creates cols in 2d array
-          for(let col = 0; col < 25 ; col++){
-            //gets starter tiles
-            let elementId = document.getElementById(row+'_'+col)
-
-            //checks for live tiles
-            if( elementId.className === 'alive'){
-              innerArray.push(1)
-
-            }
-
-            //checks for dead tiles
-            else{
-              innerArray.push(0)
-            }
-        }
-        return{
-          ...this.state,
-          current
-        }
-        })
-
-      }
-    }
-
-    let checkNeighbors = (row, col, current)=>{
-      let neighbors = 0
-      let ac = col + 1
-      let sc = col - 1
-      let ar = row + 1
-      let sr = row - 1
-      console.log(current)
-      if (sr >= 0) {//if not top row 
-        if (current[sr][col] === 1) {
-            neighbors++;}
-      }
+  let start = ()=>{
+    setInitGen()
+    setNext()
+    updateCurrent()
+    updateWorld()
+  }
+  ///////////////////////////////////////////////
 
 
-      if (sr >= 0 && sc >= 0){//tif not top right
-        if (current[sr][sc] === 1){ 
-          neighbors++;}
-      }
+  //STOP BUTTON//////////////////////////////////
+  let stop = ()=>{
 
-
-      if (sr >= 0 && ac < this.state.rows_cols){//if not top left
-              if (current[sr][ac] === 1){ 
-                  neighbors++;}
-      }
-
-
-      if (sc >= 0) {//if not left
-          if (current[row][sc] === 1){ 
-              neighbors++;}
-      }
-
-
-      if (ac < this.state.rows_cols) {//if not right
-          if (current[row][ac] === 1){ 
-              neighbors++;}
-      }
-
-      if (ar < this.state.rows_cols && sc >= 0) {//if not bottom left
-          if (current[ar][sc] === 1){ 
-              neighbors++;}
-      }
-
-      if (ar < this.state.rows_cols && ac < this.state.rows_cols) {//if not bottom right
-          if (current[ar][ac] === 1){ 
-              neighbors++;}
-      }
-      
-      
-      if (ar < this.state.rows_cols) {//if not bottom
-          if (current[ar][col] === 1) {
-              neighbors++;}
-      }
-  
-      
-      return neighbors;
-        
-    }
-
-    if( this.state.start === false){
-      steInitGen()
-      this.setState({
-        start: true,
-        gen: this.state.gen++
-      })
-    }
-    else{
-      steInitGen()
-      console.log(checkNeighbors(0,0, this.state.current))
-
-    }
+  }
+  ///////////////////////////////////////////////
 
   
-    
-  }///////////////////////////////////////////////
-
-
-
-  stop = ()=>{
-    console.log(this.state.current)
+  //RESET BUTTON/////////////////////////////////
+  let reset = ()=>{
+    initialGen()
+    updateWorld()
   }
-  reset = ()=>[
+  ///////////////////////////////////////////////
+  
 
-  ]
-  render(){
-    return (
-      <div className="App">
-        <h1>The Game of Life!</h1>
-        < World_grid/>
-        <button onClick={this.start}>Evolve</button>
-        <button onClick={this.stop}>TEST</button>
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      
+      { two_Dify_arrays()}
+      {initialGen()}
+      <h1>The game of Life</h1>
+      <World_grid/>
+      <button onClick={start}>Start</button>
+      <button onClick={stop}>Stop</button>
+      <button onClick={reset}>Reset</button>
+
+    </div>
+  );
+
 }
 
 export default App;
