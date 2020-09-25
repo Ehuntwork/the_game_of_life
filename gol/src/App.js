@@ -1,16 +1,16 @@
 import React from 'react';
 import './App.css';
-import World_grid from './world_grid'
+import World_grid from './components/world_grid'
 
 
 function App(){
   let current = []
   let next = []
   let gen = 0
-  let colorPalete = ['#9F84BD','#C09BD8','#EBC3DB','#EDE3E9','#FF9B85']
+  let PurpleColorPalate = ['#9F84BD','#C09BD8','#EBC3DB','#EDE3E9','#FF9B85']
   let FallColorPalete = ['#A41623','#F85E00','#FFB563','#FFD29D','#918450']
-  let rainbowColorPalete = ['red','orange','yellow','#82D15D','blue']
-
+  let RainbowcolorPalete = ['red','orange','yellow','#82D15D','blue']
+  let colorPalete = RainbowcolorPalete
 
   let speed = 500
   const rows_cols = 25
@@ -30,8 +30,8 @@ function App(){
     }
   }
   let setInitGen = ()=> {
-    for(let row = 0; row < 25 ; row++){
-      for(let col = 0; col < 25 ; col++){
+    for(let row = 0; row < rows_cols ; row++){
+      for(let col = 0; col < rows_cols ; col++){
         //gets starter tiles
         let elementId = document.getElementById(row+'_'+col)
 
@@ -109,8 +109,8 @@ function App(){
   let setNext = ()=>{
     let empty = 0
     //apply rules
-    for(let row = 0; row < 25 ; row++){
-      for(let col = 0; col < 25 ; col++){
+    for(let row = 0; row < rows_cols ; row++){
+      for(let col = 0; col < rows_cols ; col++){
         //if an alive cell has more than 4 or less than one neighbor it dies
         if(current[row][col] === 1){
           if(checkNeighbors(row,col) <= 1){
@@ -141,8 +141,8 @@ function App(){
   }
 
   let updateCurrent = ()=>{
-    for(let row = 0; row < 25 ; row++){
-      for(let col = 0; col < 25 ; col++){
+    for(let row = 0; row < rows_cols ; row++){
+      for(let col = 0; col < rows_cols ; col++){
         current[row][col] = next[row][col];
         // Set nextGen back to empty
         next[row][col] = 0;
@@ -157,11 +157,11 @@ function App(){
               let cell = document.getElementById(row + '_' + col);
               
               if (current[row][col] === 0) {
-                  cell.setAttribute('class', 'dead');
+                  cell.className = 'dead'
                   cell.style.backgroundColor = 'white'
               } else {
-                  cell.setAttribute('class', 'alive');
-                  cell.style.backgroundColor = rainbowColorPalete[Math.floor(Math.random()*(rainbowColorPalete.length))]
+                  cell.className = 'alive'
+                  cell.style.backgroundColor = colorPalete[Math.floor(Math.random()*(colorPalete.length))]
 
                 }
           }
@@ -173,7 +173,7 @@ function App(){
     genTag.textContent = 'Generation: '+gen
   }
   let randomWorld = ()=>{
-    for(let row = 0; row < 25 ; row++){
+    for(let row = 0; row < rows_cols ; row++){
       Math.floor(Math.random() * (18 - 7 + 1) + 7)
       let cell = document.getElementById(Math.floor(Math.random() * (18 - 7 + 1) + 7)+'_'+Math.floor(Math.random() * (18 - 7 + 1) + 7))
       cell.className = 'alive'
@@ -248,7 +248,7 @@ function App(){
   return (
     <div className="App">
       
-      { two_Dify_arrays()}
+      {two_Dify_arrays()}
       {initialGen()}
       <h1>The game of Life</h1>
 
@@ -264,6 +264,22 @@ function App(){
           <button onClick={reset}>Reset</button>
           <button onClick={nextGen}>Next</button>
         </div>
+        <div>
+        <div className='description'>
+          <h3>What is the game of life?</h3>
+          <p> It is a 'cellular automaton', invented by Cambridge mathematician John Conway.</p>
+        </div>
+        <div className='rules'>
+        <h4>Rules:</h4>
+        <div className='rulesP'>
+          <p>1. If a live(filled) cell has 2 - 3 neighbors it is allowed to live.</p>
+          <p>2. If a live(filled) cell has 1 or less neighbors it is murdered.</p>
+          <p>3. If a live(filled) cell has more than 4 neighbors it is murdered.</p>
+          <p>4. If a dead(empty) cell has exactly 3 neighbors it is resurected.</p>
+          </div>
+        </div>
+        </div>
+
       </div>
 
     </div>

@@ -48,7 +48,7 @@ td {
   align-items: center;
 }
 .buttons{
-  margin-top: 20px;
+  margin-top: 5px;
   display: flex;
   justify-content: center;
 }
@@ -65,4 +65,25 @@ button {
 }
 button:hover{
   background-color: #232323;
+}
+
+h4{
+  color: darkgrey;
+  text-decoration: none;
+  margin-bottom: 0px;
+}
+.rules{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 80px;
+}
+.rules p{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.description{
+  margin-top: 50px;
+  text-align: left;
 }
