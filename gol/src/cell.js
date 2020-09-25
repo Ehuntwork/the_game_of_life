@@ -9,21 +9,21 @@ class Cell extends React.Component{
     }
 
     onClick = ()=>{
-        console.log('Cell_test_onClick')
-        console.log(this.state.alive)
-        if( this.state.alive === false){
-            this.setState(
-                {
-                alive: true,
-                }
-            )
-        }
-        else{
-            this.setState(
-                {
-                alive: false,
-                }
-            )
+        if(this.props.started === false){
+            if( this.state.alive === false){
+                this.setState(
+                    {
+                    alive: true,
+                    }
+                )
+            }
+            else{
+                this.setState(
+                    {
+                    alive: false,
+                    }
+                )
+            }
         }
         
     }

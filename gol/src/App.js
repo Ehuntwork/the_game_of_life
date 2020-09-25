@@ -6,6 +6,13 @@ import World_grid from './world_grid'
 function App(){
   let current = []
   let next = []
+  let gen = 0
+  let colorPalete = ['#9F84BD','#C09BD8','#EBC3DB','#EDE3E9','#FF9B85']
+  let FallColorPalete = ['#A41623','#F85E00','#FFB563','#FFD29D','#918450']
+  let rainbowColorPalete = ['red','orange','yellow','#82D15D','blue']
+
+
+  let speed = 500
   const rows_cols = 25
 
   function two_Dify_arrays(){
@@ -100,6 +107,7 @@ function App(){
   }
 
   let setNext = ()=>{
+    let empty = 0
     //apply rules
     for(let row = 0; row < 25 ; row++){
       for(let col = 0; col < 25 ; col++){
@@ -113,6 +121,7 @@ function App(){
           }
           else if( checkNeighbors(row,col) >= 2 && checkNeighbors(row,col) <= 3){
             next[row][col] = 1
+            empty = empty +1
           }
         }
         
@@ -120,9 +129,14 @@ function App(){
         else if(current[row][col] === 0){
           if(checkNeighbors(row,col) === 3){
             next[row][col] = 1
+            empty = empty +1
           }
         }
       }
+    }
+
+    if(empty === 0 ){
+      stop()
     }
   }
 
@@ -147,48 +161,110 @@ function App(){
                   cell.style.backgroundColor = 'white'
               } else {
                   cell.setAttribute('class', 'alive');
-                  cell.style.backgroundColor = 'blue'
+                  cell.style.backgroundColor = rainbowColorPalete[Math.floor(Math.random()*(rainbowColorPalete.length))]
 
                 }
           }
       }
   }
+  let updateGen = ()=>{
+    gen = gen + 1
+    let genTag = document.getElementById('gen')
+    genTag.textContent = 'Generation: '+gen
+  }
+  let randomWorld = ()=>{
+    for(let row = 0; row < 25 ; row++){
+      Math.floor(Math.random() * (18 - 7 + 1) + 7)
+      let cell = document.getElementById(Math.floor(Math.random() * (18 - 7 + 1) + 7)+'_'+Math.floor(Math.random() * (18 - 7 + 1) + 7))
+      cell.className = 'alive'
+      cell.style.backgroundColor = 'black'
+    }
+  }
+
+  //STOP BUTTON//////////////////////////////////
+  let stop = ()=>{
+    _start_ = true
+  }
+  ///////////////////////////////////////////////
+
   
   //START BUTTON////////////////////////////////
+  let _start_ = false
+
   let start = ()=>{
+    if(_start_ === true){
+      _start_ = false
+    }
+
+    function loop(){
+      setInitGen()
+      setNext()
+      updateCurrent()
+      updateWorld()
+      updateGen()
+  
+      if(_start_ === false){
+        setTimeout(loop, speed)
+      }
+    }
+
+    loop()
+  }
+  ///////////////////////////////////////////////
+
+   //NEXT BUTTON////////////////////////////////
+
+   let nextGen = ()=>{
     setInitGen()
     setNext()
     updateCurrent()
     updateWorld()
-  }
-  ///////////////////////////////////////////////
-
-
-  //STOP BUTTON//////////////////////////////////
-  let stop = ()=>{
-
-  }
-  ///////////////////////////////////////////////
+    updateGen()
+   
+      
+   }
+   ///////////////////////////////////////////////
 
   
   //RESET BUTTON/////////////////////////////////
   let reset = ()=>{
     initialGen()
     updateWorld()
+    gen = -1
+    updateGen()
   }
   ///////////////////////////////////////////////
   
+  //GRW BUTTON/////////////////////////////////
+  let GRW = ()=>{
+    initialGen()
+    updateWorld()
+    gen = -1
+    updateGen()
 
+    randomWorld()
+  }
+  ///////////////////////////////////////////////
   return (
     <div className="App">
       
       { two_Dify_arrays()}
       {initialGen()}
       <h1>The game of Life</h1>
-      <World_grid/>
-      <button onClick={start}>Start</button>
-      <button onClick={stop}>Stop</button>
-      <button onClick={reset}>Reset</button>
+
+      <div className='mainGame'>
+        <button onClick={GRW}>Generate Random World</button>
+
+        <World_grid started={_start_}/>
+        <h2 id='gen'>{'Generation: '+gen}</h2>
+        
+        <div className='buttons'>
+          <button onClick={start}>Start</button>
+          <button onClick={stop}>Stop</button>
+          <button onClick={reset}>Reset</button>
+          <button onClick={nextGen}>Next</button>
+        </div>
+      </div>
 
     </div>
   );
